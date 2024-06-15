@@ -3,8 +3,8 @@ package org.m3m.sql.builder.query.delete;
 import lombok.Getter;
 import lombok.Setter;
 import org.m3m.sql.builder.query.Query;
-import org.m3m.sql.builder.query.from.DataSource;
-import org.m3m.sql.builder.query.from.SimpleFrom;
+import org.m3m.sql.builder.query.from.*;
+import org.m3m.sql.builder.query.returning.FilterOrReturn;
 import org.m3m.sql.builder.query.where.WhereQuery;
 
 public class DeleteQuery implements Query, SimpleFrom<DeleteOps>, DeleteOps {
@@ -52,7 +52,7 @@ public class DeleteQuery implements Query, SimpleFrom<DeleteOps>, DeleteOps {
 	}
 
 	@Override
-	public DeleteOps from(DataSource dataSource) {
+	public DeleteOps from(TableDataSource dataSource) {
 		this.dataSource = dataSource;
 		this.dataSource.setParent(this);
 		return this;

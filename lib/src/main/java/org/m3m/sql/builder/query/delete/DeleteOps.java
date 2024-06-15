@@ -1,4 +1,6 @@
 package org.m3m.sql.builder.query.delete;
 
-public interface DeleteOps extends UsingTables<FilterOrReturn>,
-                                   FilterOrReturn { }
+import org.m3m.sql.builder.query.returning.FilterOrReturn;
+
+public interface DeleteOps extends UsingTables<FilterOrReturn<DeleteQuery>>,
+                                   FilterOrReturn<DeleteQuery> { }
