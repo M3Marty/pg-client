@@ -7,4 +7,9 @@ public class TableDataSource extends ValueQueryAs implements DataSource {
 	public TableDataSource(String value) {
 		super(value);
 	}
+
+	@Override
+	public TableDataSource as(String value) {
+		return (TableDataSource) super.as(value);
+	}
 }

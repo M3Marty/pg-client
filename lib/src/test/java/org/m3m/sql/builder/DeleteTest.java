@@ -14,7 +14,7 @@ public class DeleteTest {
 		String query = delete()
 				.from(table("films"))
 				.using(table("producers"))
-				.where("producer_id", eqField("producers.id"))
+				.where("producer_id", eq(field("producers.id")))
 				.and("producers.name", eq("foo"))
 				.then().build();
 
@@ -60,4 +60,44 @@ public class DeleteTest {
 		String query = delete().from(table("tasks")).whereCurrentOf("c_tasks").build();
 		assertEquals("DELETE FROM tasks WHERE CURRENT OF c_tasks", query);
 	}
+
+	@Test
+	public void complexDeleteTest() {
+		String query = delete()
+				.from(table("orders").as("o"))
+				.using(table("customers").as("c"))
+				.where("o.customer_id", eq(field("c.id")))
+				.and("c.country", eq("USA"))
+				.and("o.order_date", lessThan(raw("NOW() - INTERVAL '1 year'")))
+				.and("o.quantity", lessThan(5))
+				.then().returning(all());
+
+		assertEquals("DELETE FROM orders o USING customers c WHERE o.customer_id = c.id AND c.country = 'USA' AND o.order_date < NOW() - INTERVAL '1 year' AND o.quantity < 5 RETURNING *", query);
+	}
+
+	/**
+	 * TODO
+	 *
+	 * DELETE FROM orders o
+	 * USING customers c
+	 * WHERE o.customer_id = c.id
+	 * AND c.country = 'USA'
+	 * AND o.id IN (
+	 *     SELECT o2.id
+	 *     FROM orders o2
+	 *     WHERE o2.order_date < NOW() - INTERVAL '1 year'
+	 *     AND o2.quantity < (
+	 *         SELECT AVG(o3.quantity)
+	 *         FROM orders o3
+	 *         WHERE o3.customer_id = o2.customer_id
+	 *     )
+	 * )
+	 * RETURNING o.id, o.customer_id, o.product_id, o.quantity, o.order_date;
+	 */
+//	@Test
+//	public void complexDeleteWithSelectTest() {
+//		String query = delete()
+//				.from(table("orders").as("o"))
+//				.using(table("customer").as("c"))
+//	}
 }
