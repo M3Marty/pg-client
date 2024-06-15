@@ -1,12 +1,16 @@
 package org.m3m.sql.builder;
 
 import lombok.experimental.UtilityClass;
-import org.m3m.sql.builder.query.from.FromQuery;
-import org.m3m.sql.builder.query.from.FromTableRequest;
-import org.m3m.sql.builder.query.select.*;
+import org.m3m.sql.builder.query.delete.DeleteOps;
+import org.m3m.sql.builder.query.delete.DeleteQuery;
+import org.m3m.sql.builder.query.from.*;
 
 @UtilityClass
 public class Sql {
+
+	public SimpleFrom<DeleteOps> delete() {
+		return new DeleteQuery();
+	}
 
 	public String field(String field) {
 		return field;
@@ -16,39 +20,7 @@ public class Sql {
 		return field + " AS " + alias;
 	}
 
-	public String aggregation(String function, String...argv) {
-		return AggregateQuery.buildFunction(function, argv);
-	}
-
-	public String aggregation(String function, String alias, String...argv) {
-		return aggregation(function, argv) + " AS " + alias;
-	}
-
-	public FromQuery table(String table) {
-		return new FromTableRequest(table);
-	}
-
-	public SelectQuery select(String toSelect) {
-		return new SelectQuery(toSelect);
-	}
-
-	public SelectBuilder select() {
-		return new SelectBuilder();
-	}
-
-	public SelectQuery selectAll() {
-		return new SelectQuery("*");
-	}
-
-	public AggregateQuery count() {
-		return new AggregateQuery(AggregateQuery.COUNT, "*");
-	}
-
-	public AggregateQuery count(String expression) {
-		return new AggregateQuery(AggregateQuery.COUNT, expression);
-	}
-
-	public AggregateQuery sum(String expression) {
-		return new AggregateQuery(AggregateQuery.SUM, expression);
+	public DataSource table(String table) {
+		return new TableDataSource(table);
 	}
 }

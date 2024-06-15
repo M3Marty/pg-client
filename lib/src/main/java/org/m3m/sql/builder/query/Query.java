@@ -14,6 +14,8 @@ public interface Query {
 		return topLevel.build();
 	}
 
+	String buildExpression();
+
 	Query getParent();
 	void setParent(Query query);
 }
