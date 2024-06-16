@@ -21,6 +21,10 @@ public interface Returning extends Query {
 		return returning(String.join(",", entries));
 	}
 
+	default String returning(Query query) {
+		return returning(query.buildExpression());
+	}
+
 	default String returning(ReturningType type) {
 		setReturningExpression(type.getExpression());
 		return build();

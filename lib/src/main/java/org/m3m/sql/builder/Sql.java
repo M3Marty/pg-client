@@ -45,4 +45,12 @@ public class Sql {
 	public ValueQueryAs field(String field) {
 		return new ValueQueryAs(field);
 	}
+
+	public ListQuery fields(ValueQueryAs...fields) {
+		return new ListQuery(fields);
+	}
+
+	public ListQuery values(ValueQuery...values) {
+		return new ListQuery(values);
+	}
 }

@@ -16,7 +16,7 @@ public class DeleteTest {
 				.using(table("producers"))
 				.where("producer_id", eq(field("producers.id")))
 				.and("producers.name", eq("foo"))
-				.then().build();
+				.build();
 
 		assertEquals("DELETE FROM films USING producers " +
 				"WHERE producer_id = producers.id AND producers.name = 'foo'", query);
