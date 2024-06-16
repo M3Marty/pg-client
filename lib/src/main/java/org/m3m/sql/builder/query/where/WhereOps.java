@@ -1,30 +1,19 @@
 package org.m3m.sql.builder.query.where;
 
-import org.m3m.sql.builder.query.Query;
-import org.m3m.sql.builder.query.ValueQuery;
+import org.m3m.sql.builder.Sql;
 
 public interface WhereOps<T extends WhereOps<?>> {
 
-	private static String getObjectStringValue(Object value) {
-		return switch (value) {
-			case String str -> String.format("'%s'", str);
-			case Number num -> num.toString();
-			case Query query -> query.buildExpression();
-			default -> throw new IllegalArgumentException("Unsupported type: "
-					+ value.getClass().getSimpleName());
-		};
-	}
-
 	static String eq(Object value) {
-		return " = " + getObjectStringValue(value);
+		return " = " + Sql.getObjectStringValue(value);
 	}
 
 	static String notEq(Object value) {
-		return " <> " + getObjectStringValue(value);
+		return " <> " + Sql.getObjectStringValue(value);
 	}
 
 	static String lessThan(Object value) {
-		return " < " + getObjectStringValue(value);
+		return " < " + Sql.getObjectStringValue(value);
 	}
 
 	void appendCondition(String expression);

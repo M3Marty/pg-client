@@ -1,2 +1,8 @@
-package org.m3m.sql.builder.query.from;public interface SimpleFromAliasIn {
+package org.m3m.sql.builder.query.from;
+
+public interface SimpleFromAliasIn<T> extends SimpleFrom<T> {
+
+	default T in(TableDataSource dataSource) {
+		return from(dataSource);
+	}
 }
