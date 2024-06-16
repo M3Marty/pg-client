@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.m3m.sql.builder.Sql.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.m3m.sql.builder.query.returning.Returning.all;
 import static org.m3m.sql.builder.query.where.WhereOps.*;
 public class UpdateTest {
 
@@ -13,7 +12,7 @@ public class UpdateTest {
 		String query = update().in(table("films"))
 				.set(field("kind"), "Dramatic")
 				.where("kind", eq("Drama"))
-				.then().build();
+				.build();
 
 		assertEquals("UPDATE films SET kind = 'Dramatic' WHERE kind = 'Drama'", query);
 	}
@@ -55,4 +54,72 @@ public class UpdateTest {
 		assertEquals("UPDATE weather SET (temp_lo,temp_hi,prcp) = (temp_lo+1,temp_lo+15,DEFAULT) WHERE city = 'San Francisco' AND date = '2003-07-03'", query);
 	}
 
+	@Test
+	public void updateWithFilterAndAdditionalSourceTest() {
+		String query = update().in(table("employees"))
+				.set(field("sales_count"), raw("sales_count + 1"))
+				.from(table("accounts"))
+				.where("accounts.name", eq("Acme Corporation"))
+				.and("employees.id", eq(field("accounts.sales_person")))
+				.build();
+
+		assertEquals("UPDATE employees SET sales_count = sales_count + 1 FROM accounts WHERE accounts.name = 'Acme Corporation' AND employees.id = accounts.sales_person", query);
+	}
+
+	/**
+	 * TODO
+	 *
+	 * UPDATE employees SET sales_count = sales_count + 1 WHERE id =
+	 *   (SELECT sales_person FROM accounts WHERE name = 'Acme Corporation')
+	 */
+	@Test
+	public void updateWithInnerQueryTest() {
+
+	}
+
+	/**
+	 * TODO
+	 *
+	 * UPDATE accounts SET (contact_first_name, contact_last_name) =
+	 *     (SELECT first_name, last_name FROM salesmen
+	 *      WHERE salesmen.id = accounts.sales_id);
+	 */
+	@Test
+	public void updateDataFromAnotherTableTest() {
+
+	}
+
+	@Test
+	public void updateDataFromAnotherTableUsingAdditionalSourceTest() {
+		String query = update().in(table("accounts"))
+				.set(field("contact_first_name"), field("first_name"))
+				.set(field("contact_last_name"), field("last_name"))
+				.from(table("salesmen"))
+				.where("salesmen.id", eq(field("accounts.sales_id")))
+				.build();
+
+		assertEquals("UPDATE accounts SET contact_first_name = first_name,contact_last_name = last_name FROM salesmen WHERE salesmen.id = accounts.sales_id", query);
+	}
+
+	/**
+	 * TODO
+	 *
+	 * UPDATE summary s SET (sum_x, sum_y, avg_x, avg_y) =
+	 *     (SELECT sum(x), sum(y), avg(x), avg(y) FROM data d
+	 *      WHERE d.group_id = s.group_id)
+	 */
+	@Test
+	public void updateSummaryTableTest() {
+
+	}
+
+	@Test
+	public void updateWhereCursorTest() {
+		String query = update().in(table("films"))
+				.set(field("kind"), "Dramatic")
+				.whereCurrentOf("c_films")
+				.build();
+
+		assertEquals("UPDATE films SET kind = 'Dramatic' WHERE CURRENT OF c_films", query);
+	}
 }
