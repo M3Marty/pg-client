@@ -6,7 +6,7 @@ import org.m3m.sql.builder.query.delete.DeleteOps;
 import org.m3m.sql.builder.query.delete.DeleteQuery;
 import org.m3m.sql.builder.query.from.*;
 import org.m3m.sql.builder.query.insert.InsertQuery;
-import org.m3m.sql.builder.query.insert.InsertValuesOpts;
+import org.m3m.sql.builder.query.insert.InsertValuesOps;
 import org.m3m.sql.builder.query.update.*;
 
 @UtilityClass
@@ -28,11 +28,11 @@ public class Sql {
 		};
 	}
 
-	public SimpleFromAliasInto<InsertValuesOpts> insert() {
+	public SimpleFromAliasInto<InsertValuesOps> insert() {
 		return new InsertQuery();
 	}
 
-	public SimpleFromAliasIn<UpdateSetOpts<UpdateSetBuilder>> update() {
+	public SimpleFromAliasIn<UpdateSetOps<UpdateSetBuilder>> update() {
 		return new UpdateQuery();
 	}
 

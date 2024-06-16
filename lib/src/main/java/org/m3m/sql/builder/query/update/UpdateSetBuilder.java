@@ -1,7 +1,6 @@
 package org.m3m.sql.builder.query.update;
 
 import lombok.Getter;
-import lombok.Setter;
 import org.m3m.sql.builder.query.Query;
 import org.m3m.sql.builder.query.from.DataSource;
 import org.m3m.sql.builder.query.returning.FilterOrReturn;
@@ -10,7 +9,8 @@ import org.m3m.sql.builder.query.where.WhereQuery;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UpdateSetBuilder implements Query, UpdateOpts, UpdateSetOpts<UpdateSetBuilder> {
+public class UpdateSetBuilder implements Query, UpdateOps,
+                                         UpdateSetOps<UpdateSetBuilder> {
 
 	@Getter
 	private UpdateQuery parent;

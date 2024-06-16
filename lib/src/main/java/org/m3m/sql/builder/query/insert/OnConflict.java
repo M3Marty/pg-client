@@ -3,7 +3,7 @@ package org.m3m.sql.builder.query.insert;
 import org.m3m.sql.builder.query.from.TableDataSource;
 import org.m3m.sql.builder.query.returning.Returning;
 import org.m3m.sql.builder.query.update.UpdateSetBuilder;
-import org.m3m.sql.builder.query.update.UpdateSetOpts;
+import org.m3m.sql.builder.query.update.UpdateSetOps;
 
 public interface OnConflict {
 
@@ -13,7 +13,7 @@ public interface OnConflict {
 		return appendOnConflictExpression("DO NOTHING");
 	}
 
-	default UpdateSetOpts<UpdateSetBuilder> doUpdate() {
+	default UpdateSetOps<UpdateSetBuilder> doUpdate() {
 		return new OnConflictUpdateQuery(appendOnConflictExpression(""))
 				.from((TableDataSource) null);
 	}

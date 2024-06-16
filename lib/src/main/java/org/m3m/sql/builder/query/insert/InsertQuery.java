@@ -11,8 +11,8 @@ import org.m3m.sql.builder.query.where.WhereQuery;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class InsertQuery implements SimpleFromAliasInto<InsertValuesOpts>,
-                                    InsertValuesOpts, InsertOpts {
+public class InsertQuery implements SimpleFromAliasInto<InsertValuesOps>,
+                                    InsertValuesOps, InsertOps {
 
 	private static final String CONFLICT_WHERE = "${CONFLICT_WHERE}";
 
@@ -65,7 +65,7 @@ public class InsertQuery implements SimpleFromAliasInto<InsertValuesOpts>,
 	}
 
 	@Override
-	public InsertValuesOpts from(TableDataSource dataSource) {
+	public InsertValuesOps from(TableDataSource dataSource) {
 		this.dataSource = dataSource;
 		return this;
 	}

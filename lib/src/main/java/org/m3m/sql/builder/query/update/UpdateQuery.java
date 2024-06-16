@@ -7,8 +7,8 @@ import org.m3m.sql.builder.query.from.*;
 import org.m3m.sql.builder.query.returning.FilterOrReturn;
 import org.m3m.sql.builder.query.where.WhereQuery;
 
-public class UpdateQuery implements SimpleFromAliasIn<UpdateSetOpts<UpdateSetBuilder>>,
-                                    Query, UpdateOpts {
+public class UpdateQuery implements SimpleFromAliasIn<UpdateSetOps<UpdateSetBuilder>>,
+                                    Query, UpdateOps {
 
 	@Getter
 	@Setter

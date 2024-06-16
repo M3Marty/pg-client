@@ -1,6 +1,6 @@
 package org.m3m.sql.builder.query.insert;
 
-public interface InsertValuesOpts {
+public interface InsertValuesOps {
 
 	AddOrOnConflictOrReturn setValuesExpression(String expression);
 
