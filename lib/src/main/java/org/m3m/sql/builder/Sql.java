@@ -47,10 +47,10 @@ public class Sql {
 	}
 
 	public ListQuery fields(ValueQueryAs...fields) {
-		return new ListQuery(fields);
+		return new ListQuery((Object[]) fields);
 	}
 
 	public ListQuery values(ValueQuery...values) {
-		return new ListQuery(values);
+		return new ListQuery((Object[]) values);
 	}
 }
