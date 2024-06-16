@@ -54,26 +54,18 @@ public class DeleteQuery implements Query, SimpleFrom<DeleteOps>, DeleteOps {
 	@Override
 	public DeleteOps from(TableDataSource dataSource) {
 		this.dataSource = dataSource;
-		this.dataSource.setParent(this);
 		return this;
 	}
 
 	@Override
 	public FilterOrReturn<DeleteQuery> using(DataSource...dataSource) {
 		this.usedDataSource = dataSource;
-		if (this.usedDataSource != null) {
-			for (var ds : usedDataSource) {
-				ds.setParent(this);
-			}
-		}
-
 		return this;
 	}
 
 	@Override
 	public WhereQuery<DeleteQuery> setWhereQuery(WhereQuery<DeleteQuery> whereQuery) {
 		this.whereQuery = whereQuery;
-		this.whereQuery.setParent(this);
 		return whereQuery;
 	}
 }

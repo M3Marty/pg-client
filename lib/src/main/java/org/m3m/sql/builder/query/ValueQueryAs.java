@@ -12,7 +12,7 @@ public class ValueQueryAs extends ValueQuery implements As<ValueQueryAs> {
 
 		this.isAssociated = true;
 		this.value += " AS " + value;
-		return null;
+		return this;
 	}
 
 	public ValueQueryAs(String value) {

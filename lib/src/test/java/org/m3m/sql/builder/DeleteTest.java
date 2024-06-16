@@ -72,7 +72,7 @@ public class DeleteTest {
 				.and("o.quantity", lessThan(5))
 				.then().returning(all());
 
-		assertEquals("DELETE FROM orders o USING customers c WHERE o.customer_id = c.id AND c.country = 'USA' AND o.order_date < NOW() - INTERVAL '1 year' AND o.quantity < 5 RETURNING *", query);
+		assertEquals("DELETE FROM orders AS o USING customers AS c WHERE o.customer_id = c.id AND c.country = 'USA' AND o.order_date < NOW() - INTERVAL '1 year' AND o.quantity < 5 RETURNING *", query);
 	}
 
 	/**
