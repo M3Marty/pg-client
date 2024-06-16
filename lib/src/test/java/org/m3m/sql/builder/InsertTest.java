@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.m3m.sql.builder.Sql.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.m3m.sql.builder.query.where.WhereOps.notEq;
+
 public class InsertTest {
 
 	@Test
@@ -59,5 +61,61 @@ public class InsertTest {
 				.add(defaultValue(), "XYZ Widgets").returning(field("did"));
 
 		assertEquals("INSERT INTO distributors (did,dname) VALUES (DEFAULT,'XYZ Widgets') RETURNING did", query);
+	}
+
+	@Test
+	public void insertWithConflictDoUpdateTest() {
+		String query = insert().into(table("distributors")).values("did", "dname")
+				.add(5, "Gizmo Transglobal")
+				.add(6, "Associated Computing Inc")
+				.onConflict().fields("did")
+				.doUpdate().set(field("dname"), excluded("dname"))
+				.build();
+
+		assertEquals("INSERT INTO distributors (did,dname) VALUES (5,'Gizmo Transglobal'),(6,'Associated Computing Inc') ON CONFLICT (did) DO UPDATE SET dname = EXCLUDED.dname", query);
+	}
+
+	@Test
+	public void insertWithConflictDoNothingTest() {
+		String query = insert().into(table("distributors")).values("did", "dname")
+				.add(5, "Gizmo Transglobal")
+				.add(6, "Associated Computing Inc")
+				.onConflict().fields("did")
+				.doNothing().build();
+
+		assertEquals("INSERT INTO distributors (did,dname) VALUES (5,'Gizmo Transglobal'),(6,'Associated Computing Inc') ON CONFLICT (did) DO NOTHING", query);
+	}
+
+	@Test
+	public void insertWithFilteredUpdateConflictHandleTest() {
+		String query = insert().into(table("distributors").as("d"))
+				.values("did", "dname").add(8, "Anvil Distribution")
+				.onConflict().fields("did")
+				.doUpdate().set(field("dname"),
+						str(excluded("dname")).cat(" (formerly ").cat(field("d.dname")).cat(")"))
+				.where("d.zipcode", notEq("21201"))
+				.build();
+
+		assertEquals("INSERT INTO distributors AS d (did,dname) VALUES (8,'Anvil Distribution') ON CONFLICT (did) DO UPDATE SET dname = EXCLUDED.dname || ' (formerly ' || d.dname || ')' WHERE d.zipcode <> '21201'", query);
+	}
+
+	@Test
+	public void insertWithConflictOnConstraintTest() {
+		String query = insert().into(table("distributors"))
+				.values("did", "dname").add(9, "Antwerp Design")
+				.onConflict().onConstraint("distributors_pkey").doNothing()
+				.build();
+
+		assertEquals("INSERT INTO distributors (did,dname) VALUES (9,'Antwerp Design') ON CONFLICT ON CONSTRAINT distributors_pkey DO NOTHING", query);
+	}
+
+	@Test
+	public void insertWithConflictFilterTest() {
+		String query = insert().into(table("distributors"))
+				.values("did", "dname").add(10, "Conrad International")
+				.onConflict().fields("did").where("is_active").then().doNothing()
+				.build();
+
+		assertEquals("INSERT INTO distributors (did,dname) VALUES (10,'Conrad International') ON CONFLICT (did) WHERE is_active DO NOTHING", query);
 	}
 }

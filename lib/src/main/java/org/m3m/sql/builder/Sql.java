@@ -48,8 +48,16 @@ public class Sql {
 		return new ValueQuery(raw);
 	}
 
+	public StringQuery str(Object value) {
+		return new StringQuery(value);
+	}
+
 	public ValueQueryAs field(String field) {
 		return new ValueQueryAs(field);
+	}
+
+	public ValueQuery excluded(String field) {
+		return new ValueQuery("EXCLUDED." + field);
 	}
 
 	public ListQuery fields(ValueQueryAs...fields) {

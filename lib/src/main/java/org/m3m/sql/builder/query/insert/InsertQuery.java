@@ -6,12 +6,15 @@ import org.m3m.sql.builder.Sql;
 import org.m3m.sql.builder.query.Query;
 import org.m3m.sql.builder.query.from.SimpleFromAliasInto;
 import org.m3m.sql.builder.query.from.TableDataSource;
+import org.m3m.sql.builder.query.where.WhereQuery;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class InsertQuery implements SimpleFromAliasInto<InsertValuesOpts>,
                                     InsertValuesOpts, InsertOpts {
+
+	private static final String CONFLICT_WHERE = "${CONFLICT_WHERE}";
 
 	@Setter @Getter
 	private Query parent;
@@ -23,7 +26,11 @@ public class InsertQuery implements SimpleFromAliasInto<InsertValuesOpts>,
 	@Setter
 	private String returningExpression;
 
-	private List<String> values = new ArrayList<>();
+	private StringBuilder onConflictBuilder;
+
+	private final List<String> values = new ArrayList<>();
+
+	private WhereQuery<OnConflict> whereQuery;
 
 	@Override
 	public String build() {
@@ -40,7 +47,15 @@ public class InsertQuery implements SimpleFromAliasInto<InsertValuesOpts>,
 				.append(valuesExpression)
 				.append(String.join(",", values));
 
-		// TODO on conflict
+		if (onConflictBuilder != null && onConflictBuilder.length() > 11) {
+			if (whereQuery != null) {
+				builder.append(' ').append(onConflictBuilder.toString()
+						.replace(CONFLICT_WHERE, "WHERE " + whereQuery.buildExpression()));
+			}
+			else {
+				builder.append(' ').append(onConflictBuilder);
+			}
+		}
 
 		if (returningExpression != null) {
 			builder.append(' ').append(returningExpression);
@@ -73,5 +88,24 @@ public class InsertQuery implements SimpleFromAliasInto<InsertValuesOpts>,
 		this.values.add("(" + String.join(",", valuesIterable) + ")");
 
 		return this;
+	}
+
+	@Override
+	public InsertQuery appendOnConflictExpression(String expression) {
+		if (onConflictBuilder == null) {
+			onConflictBuilder = new StringBuilder("ON CONFLICT");
+		}
+		if (!expression.isEmpty()) {
+			onConflictBuilder.append(' ').append(expression);
+		}
+
+		return this;
+	}
+
+	@Override
+	public WhereQuery<OnConflict> setWhereQuery(WhereQuery<OnConflict> whereQuery) {
+		appendOnConflictExpression(CONFLICT_WHERE);
+		this.whereQuery = whereQuery;
+		return whereQuery;
 	}
 }

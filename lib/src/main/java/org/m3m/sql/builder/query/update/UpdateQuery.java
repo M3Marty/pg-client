@@ -14,15 +14,15 @@ public class UpdateQuery implements SimpleFromAliasIn<UpdateSetOpts<UpdateSetBui
 	@Setter
 	private Query parent;
 
-	private DataSource dataSource;
-	private DataSource[] usedDataSource;
+	protected DataSource dataSource;
+	protected DataSource[] usedDataSource;
 
 	@Setter
-	private String returningExpression;
+	protected String returningExpression;
 
-	private Query whereQuery;
+	protected Query whereQuery;
 
-	private UpdateSetBuilder setBuilder;
+	protected UpdateSetBuilder setBuilder;
 
 	@Override
 	public String build() {
@@ -61,26 +61,18 @@ public class UpdateQuery implements SimpleFromAliasIn<UpdateSetOpts<UpdateSetBui
 	@Override
 	public UpdateSetBuilder from(TableDataSource dataSource) {
 		this.dataSource = dataSource;
-		this.dataSource.setParent(this);
 		return this.setBuilder = new UpdateSetBuilder(this);
 	}
 
 	@Override
 	public FilterOrReturn<UpdateQuery> from(DataSource... dataSource) {
 		this.usedDataSource = dataSource;
-		if (this.usedDataSource != null) {
-			for (var ds : usedDataSource) {
-				ds.setParent(this);
-			}
-		}
-
 		return this;
 	}
 
 	@Override
 	public WhereQuery<UpdateQuery> setWhereQuery(WhereQuery<UpdateQuery> whereQuery) {
 		this.whereQuery = whereQuery;
-		this.whereQuery.setParent(this);
 		return whereQuery;
 	}
 }

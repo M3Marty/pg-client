@@ -2,8 +2,9 @@ package org.m3m.sql.builder.query.update;
 
 import org.m3m.sql.builder.Sql;
 import org.m3m.sql.builder.query.ListQuery;
+import org.m3m.sql.builder.query.Query;
 
-public interface UpdateSetOpts<T extends UpdateSetOpts<?>> {
+public interface UpdateSetOpts<T extends UpdateSetOpts<?>> extends Query {
 
 	T set(String field, String expression);
 

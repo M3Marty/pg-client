@@ -7,7 +7,7 @@ public interface WhereCondition<T> extends Query {
 	WhereQuery<T> setWhereQuery(WhereQuery<T> whereQuery);
 
 	default WhereQuery<T> where(String condition) {
-		return setWhereQuery(new WhereQuery<>(this, condition));
+		return setWhereQuery(new WhereQuery<>(this.query(), condition));
 	}
 
 	default WhereQuery<T> where(String operand, String operator) {
