@@ -12,4 +12,8 @@ public class TableDataSource extends ValueQueryAs implements DataSource {
 	public TableDataSource as(String value) {
 		return (TableDataSource) super.as(value);
 	}
+
+	public TableDataSource as(String value, String...fieldAliases) {
+		return as(value + " " + String.join(",", fieldAliases));
+	}
 }

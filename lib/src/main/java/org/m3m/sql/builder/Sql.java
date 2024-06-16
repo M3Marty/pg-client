@@ -7,15 +7,21 @@ import org.m3m.sql.builder.query.delete.DeleteQuery;
 import org.m3m.sql.builder.query.from.*;
 import org.m3m.sql.builder.query.insert.InsertQuery;
 import org.m3m.sql.builder.query.insert.InsertValuesOps;
+import org.m3m.sql.builder.query.select.distinct.DistinctOrSelectValues;
+import org.m3m.sql.builder.query.select.SelectQuery;
 import org.m3m.sql.builder.query.update.*;
 
 @UtilityClass
 public class Sql {
 
 	ValueQuery DEFAULT = raw("DEFAULT");
+	ValueQuery ALL = raw("*");
 
 	ValueQuery defaultValue() {
 		return DEFAULT;
+	}
+	ValueQuery all() {
+		return ALL;
 	}
 
 	public String getObjectStringValue(Object value) {
@@ -30,6 +36,10 @@ public class Sql {
 
 	public SimpleFromAliasInto<InsertValuesOps> insert() {
 		return new InsertQuery();
+	}
+
+	public DistinctOrSelectValues select() {
+		return new SelectQuery();
 	}
 
 	public SimpleFromAliasIn<UpdateSetOps<UpdateSetBuilder>> update() {

@@ -12,8 +12,12 @@ public interface WhereOps<T extends WhereOps<?>> {
 		return " <> " + Sql.getObjectStringValue(value);
 	}
 
-	static String lessThan(Object value) {
+	static String lsThan(Object value) {
 		return " < " + Sql.getObjectStringValue(value);
+	}
+
+	static String grThan(Object value) {
+		return " > " + Sql.getObjectStringValue(value);
 	}
 
 	void appendCondition(String expression);

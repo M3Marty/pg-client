@@ -68,8 +68,8 @@ public class DeleteTest {
 				.using(table("customers").as("c"))
 				.where("o.customer_id", eq(field("c.id")))
 				.and("c.country", eq("USA"))
-				.and("o.order_date", lessThan(raw("NOW() - INTERVAL '1 year'")))
-				.and("o.quantity", lessThan(5))
+				.and("o.order_date", lsThan(raw("NOW() - INTERVAL '1 year'")))
+				.and("o.quantity", lsThan(5))
 				.then().returning(all());
 
 		assertEquals("DELETE FROM orders AS o USING customers AS c WHERE o.customer_id = c.id AND c.country = 'USA' AND o.order_date < NOW() - INTERVAL '1 year' AND o.quantity < 5 RETURNING *", query);
