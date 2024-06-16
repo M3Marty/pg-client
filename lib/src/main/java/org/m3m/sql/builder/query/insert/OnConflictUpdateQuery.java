@@ -27,10 +27,6 @@ public class OnConflictUpdateQuery extends UpdateQuery {
 			builder.append(" WHERE ").append(whereQuery.buildExpression());
 		}
 
-		if (returningExpression != null && !returningExpression.isEmpty()) {
-			builder.append(' ').append(returningExpression);
-		}
-
 		return builder.toString();
 	}
 
