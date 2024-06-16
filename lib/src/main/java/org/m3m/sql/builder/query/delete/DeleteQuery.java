@@ -36,7 +36,7 @@ public class DeleteQuery implements Query, SimpleFrom<DeleteOps>, DeleteOps {
 		if (usedDataSource != null && usedDataSource.length != 0) {
 			builder.append(" USING ").append(usedDataSource[0].buildExpression());
 			for (int i = 1; i < usedDataSource.length; i++) {
-				builder.append(", ").append(usedDataSource[i].buildExpression());
+				builder.append(",").append(usedDataSource[i].buildExpression());
 			}
 		}
 
