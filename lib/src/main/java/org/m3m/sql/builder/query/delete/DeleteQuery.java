@@ -59,7 +59,7 @@ public class DeleteQuery implements Query, SimpleFrom<DeleteOps>, DeleteOps {
 	}
 
 	@Override
-	public FilterOrReturn using(DataSource...dataSource) {
+	public FilterOrReturn<DeleteQuery> using(DataSource...dataSource) {
 		this.usedDataSource = dataSource;
 		if (this.usedDataSource != null) {
 			for (var ds : usedDataSource) {
