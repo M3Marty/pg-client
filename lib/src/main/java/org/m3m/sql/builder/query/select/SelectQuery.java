@@ -28,7 +28,7 @@ public class SelectQuery implements DistinctableSelect, DistinctOrSelectValues,
 		StringBuilder builder = new StringBuilder("SELECT ")
 				.append(distinctExpression)
 				.append(selectValuesExpression)
-				.append(" FROM ").append(fromExpression);
+				.append(" FROM").append(fromExpression);
 
 		return builder.toString();
 	}
