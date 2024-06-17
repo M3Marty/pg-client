@@ -1,20 +1,25 @@
-package org.m3m.sql.builder.query.insert;
+package org.m3m.sql.builder.query.insert.conflict;
 
-import lombok.AllArgsConstructor;
+import org.m3m.sql.builder.query.Query;
+import org.m3m.sql.builder.query.insert.InsertQuery;
 import org.m3m.sql.builder.query.update.UpdateQuery;
 
-@AllArgsConstructor
 public class OnConflictUpdateQuery extends UpdateQuery {
 
-	private InsertQuery insertQuery;
+	private final InsertQuery insertQuery;
+
+	public OnConflictUpdateQuery(Object insertQuery) {
+		this.insertQuery = (InsertQuery) insertQuery;
+	}
 
 	@Override
 	public String buildExpression() {
-		if (setBuilder == null)
+		if (getSetExpressions().isEmpty()) {
 			throw new IllegalStateException("Can't update without SET statement");
+		}
 
 		StringBuilder builder = new StringBuilder("DO UPDATE SET ")
-				.append(setBuilder.buildExpression());
+				.append(String.join(",", getSetExpressions()));
 
 		if (usedDataSource != null && usedDataSource.length != 0) {
 			builder.append(" FROM ").append(usedDataSource[0].buildExpression());
@@ -23,8 +28,8 @@ public class OnConflictUpdateQuery extends UpdateQuery {
 			}
 		}
 
-		if (whereQuery != null) {
-			builder.append(" WHERE ").append(whereQuery.buildExpression());
+		if (!getWhereExpression().isEmpty()) {
+			builder.append(getWhereExpression());
 		}
 
 		return builder.toString();

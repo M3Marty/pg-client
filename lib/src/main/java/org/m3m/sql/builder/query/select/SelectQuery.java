@@ -13,17 +13,13 @@ public class SelectQuery implements DistinctableSelect, DistinctOrSelectValues,
                                     JoiningCondition, JoiningConditionBuilder,
                                     SelectOps, Query {
 
-	@Setter @Getter
-	private Query parent;
-
 	@Setter
 	private String distinctExpression = "";
 
-	@Setter
 	private String selectValuesExpression;
 
-	@Setter @Getter
-	private StringBuilder fromExpression;
+	@Getter(lazy = true)
+	private final StringBuilder fromExpression = new StringBuilder();
 
 	@Override
 	public String build() {
@@ -45,6 +41,12 @@ public class SelectQuery implements DistinctableSelect, DistinctOrSelectValues,
 	@Override
 	public DistinctOnOrSelectValues distinct() {
 		this.distinctExpression = "DISTINCT ";
+		return this;
+	}
+
+	@Override
+	public SelectQuery setSelectValuesExpression(String expression) {
+		selectValuesExpression = expression;
 		return this;
 	}
 }

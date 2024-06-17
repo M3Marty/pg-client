@@ -6,9 +6,6 @@ import org.m3m.sql.builder.Sql;
 
 public class ListQuery implements Query {
 
-	@Getter @Setter
-	private Query parent;
-
 	private Object[] list;
 
 	public ListQuery(Object...list) {

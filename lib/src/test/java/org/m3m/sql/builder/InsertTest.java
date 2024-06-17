@@ -113,7 +113,7 @@ public class InsertTest {
 	public void insertWithConflictFilterTest() {
 		String query = insert().into(table("distributors"))
 				.values("did", "dname").add(10, "Conrad International")
-				.onConflict().fields("did").where("is_active").then().doNothing()
+				.onConflict().fields("did").where("is_active").doNothing()
 				.build();
 
 		assertEquals("INSERT INTO distributors (did,dname) VALUES (10,'Conrad International') ON CONFLICT (did) WHERE is_active DO NOTHING", query);

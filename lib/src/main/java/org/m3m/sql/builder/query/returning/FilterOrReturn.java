@@ -1,6 +1,7 @@
 package org.m3m.sql.builder.query.returning;
 
-import org.m3m.sql.builder.query.where.WhereConditionOrCursor;
+import org.m3m.sql.builder.query.where.*;
 
-public interface FilterOrReturn<T> extends WhereConditionOrCursor<T>,
-                                           Returning { }
+public interface FilterOrReturn
+		extends WhereConditionOrCursor<ReturningConditionBuilder>,
+		        ReturningConditionBuilder { }

@@ -5,20 +5,18 @@ import lombok.Setter;
 import org.m3m.sql.builder.query.Query;
 import org.m3m.sql.builder.query.from.*;
 import org.m3m.sql.builder.query.returning.FilterOrReturn;
-import org.m3m.sql.builder.query.where.WhereQuery;
 
-public class DeleteQuery implements Query, SimpleFrom<DeleteOps>, DeleteOps {
-
-	@Getter @Setter
-	private Query parent;
+public class DeleteQuery implements SimpleFrom<DeleteOps>, DeleteOps, Query {
 
 	private DataSource dataSource;
+
 	private DataSource[] usedDataSource;
 
 	@Setter
 	private String returningExpression;
 
-	private Query whereQuery;
+	@Getter(lazy = true)
+	private final StringBuilder whereExpression = new StringBuilder();
 
 	@Override
 	public String buildExpression() {
@@ -40,8 +38,8 @@ public class DeleteQuery implements Query, SimpleFrom<DeleteOps>, DeleteOps {
 			}
 		}
 
-		if (whereQuery != null) {
-			builder.append(" WHERE ").append(whereQuery.buildExpression());
+		if (!getWhereExpression().isEmpty()) {
+			builder.append(getWhereExpression());
 		}
 
 		if (returningExpression != null && !returningExpression.isEmpty()) {
@@ -58,14 +56,8 @@ public class DeleteQuery implements Query, SimpleFrom<DeleteOps>, DeleteOps {
 	}
 
 	@Override
-	public FilterOrReturn<DeleteQuery> using(DataSource...dataSource) {
+	public FilterOrReturn using(DataSource...dataSource) {
 		this.usedDataSource = dataSource;
 		return this;
-	}
-
-	@Override
-	public WhereQuery<DeleteQuery> setWhereQuery(WhereQuery<DeleteQuery> whereQuery) {
-		this.whereQuery = whereQuery;
-		return whereQuery;
 	}
 }

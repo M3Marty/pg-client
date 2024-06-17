@@ -1,4 +1,6 @@
-package org.m3m.sql.builder.query.insert;
+package org.m3m.sql.builder.query.insert.conflict;
+
+import org.m3m.sql.builder.query.insert.conflict.FilterableOnConflict;
 
 public interface OnConflictBuilder extends FilterableOnConflict {
 

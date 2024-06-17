@@ -1,12 +1,6 @@
 package org.m3m.sql.builder.query;
 
-import lombok.*;
-
-@Getter
 public class ValueQuery implements Query {
-
-	@Setter
-	private Query parent;
 
 	protected String value;
 

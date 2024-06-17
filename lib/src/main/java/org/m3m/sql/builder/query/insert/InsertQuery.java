@@ -6,18 +6,15 @@ import org.m3m.sql.builder.Sql;
 import org.m3m.sql.builder.query.Query;
 import org.m3m.sql.builder.query.from.SimpleFromAliasInto;
 import org.m3m.sql.builder.query.from.TableDataSource;
-import org.m3m.sql.builder.query.where.WhereQuery;
+import org.m3m.sql.builder.query.insert.conflict.AddOrOnConflictOrReturn;
+import org.m3m.sql.builder.query.insert.conflict.ConflictConditionBuilder;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class InsertQuery implements SimpleFromAliasInto<InsertValuesOps>,
+                                    ConflictConditionBuilder,
                                     InsertValuesOps, InsertOps {
-
-	private static final String CONFLICT_WHERE = "${CONFLICT_WHERE}";
-
-	@Setter @Getter
-	private Query parent;
 
 	private TableDataSource dataSource;
 
@@ -26,11 +23,10 @@ public class InsertQuery implements SimpleFromAliasInto<InsertValuesOps>,
 	@Setter
 	private String returningExpression;
 
-	private StringBuilder onConflictBuilder;
+	@Getter(lazy = true)
+	private final StringBuilder onConflictExpression = new StringBuilder();
 
 	private final List<String> values = new ArrayList<>();
-
-	private WhereQuery<OnConflict> whereQuery;
 
 	@Override
 	public String build() {
@@ -47,13 +43,13 @@ public class InsertQuery implements SimpleFromAliasInto<InsertValuesOps>,
 				.append(valuesExpression)
 				.append(String.join(",", values));
 
-		if (onConflictBuilder != null && onConflictBuilder.length() > 11) {
-			if (whereQuery != null) {
-				builder.append(' ').append(onConflictBuilder.toString()
-						.replace(CONFLICT_WHERE, "WHERE " + whereQuery.buildExpression()));
+		if (!getOnConflictExpression().isEmpty()) {
+			builder.append(' ').append("ON CONFLICT");
+			if (!getWhereExpression().isEmpty()) {
+				builder.append(getOnConflictExpression());
 			}
 			else {
-				builder.append(' ').append(onConflictBuilder);
+				builder.append(getOnConflictExpression());
 			}
 		}
 
@@ -91,21 +87,7 @@ public class InsertQuery implements SimpleFromAliasInto<InsertValuesOps>,
 	}
 
 	@Override
-	public InsertQuery appendOnConflictExpression(String expression) {
-		if (onConflictBuilder == null) {
-			onConflictBuilder = new StringBuilder("ON CONFLICT");
-		}
-		if (!expression.isEmpty()) {
-			onConflictBuilder.append(' ').append(expression);
-		}
-
-		return this;
-	}
-
-	@Override
-	public WhereQuery<OnConflict> setWhereQuery(WhereQuery<OnConflict> whereQuery) {
-		appendOnConflictExpression(CONFLICT_WHERE);
-		this.whereQuery = whereQuery;
-		return whereQuery;
+	public StringBuilder getWhereExpression() {
+		return getOnConflictExpression();
 	}
 }

@@ -5,14 +5,12 @@ import lombok.Setter;
 import org.m3m.sql.builder.query.Query;
 import org.m3m.sql.builder.query.from.*;
 import org.m3m.sql.builder.query.returning.FilterOrReturn;
-import org.m3m.sql.builder.query.where.WhereQuery;
 
-public class UpdateQuery implements SimpleFromAliasIn<UpdateSetOps<UpdateSetBuilder>>,
-                                    Query, UpdateOps {
+import java.util.ArrayList;
+import java.util.List;
 
-	@Getter
-	@Setter
-	private Query parent;
+public class UpdateQuery implements SimpleFromAliasIn<UpdateSetOps>,
+                                    UpdateSetOps, UpdateOps, Query {
 
 	protected DataSource dataSource;
 	protected DataSource[] usedDataSource;
@@ -20,20 +18,22 @@ public class UpdateQuery implements SimpleFromAliasIn<UpdateSetOps<UpdateSetBuil
 	@Setter
 	protected String returningExpression;
 
-	protected Query whereQuery;
+	@Getter(lazy = true)
+	private final StringBuilder whereExpression = new StringBuilder();
 
-	protected UpdateSetBuilder setBuilder;
+	@Getter
+	protected List<String> setExpressions = new ArrayList<>();
 
 	@Override
 	public String build() {
 		if (dataSource == null)
 			throw new IllegalStateException("Can't update without data source");
-		if (setBuilder == null)
+		if (setExpressions.isEmpty())
 			throw new IllegalStateException("Can't update without SET statement");
 
 		StringBuilder builder = new StringBuilder("UPDATE ")
 				.append(dataSource.buildExpression())
-				.append(" SET ").append(setBuilder.buildExpression());
+				.append(" SET ").append(String.join(",", setExpressions));
 
 		if (usedDataSource != null && usedDataSource.length != 0) {
 			builder.append(" FROM ").append(usedDataSource[0].buildExpression());
@@ -42,8 +42,8 @@ public class UpdateQuery implements SimpleFromAliasIn<UpdateSetOps<UpdateSetBuil
 			}
 		}
 
-		if (whereQuery != null) {
-			builder.append(" WHERE ").append(whereQuery.buildExpression());
+		if (!getWhereExpression().isEmpty()) {
+			builder.append(getWhereExpression());
 		}
 
 		if (returningExpression != null && !returningExpression.isEmpty()) {
@@ -59,20 +59,14 @@ public class UpdateQuery implements SimpleFromAliasIn<UpdateSetOps<UpdateSetBuil
 	}
 
 	@Override
-	public UpdateSetBuilder from(TableDataSource dataSource) {
+	public UpdateSetOps from(TableDataSource dataSource) {
 		this.dataSource = dataSource;
-		return this.setBuilder = new UpdateSetBuilder(this);
-	}
-
-	@Override
-	public FilterOrReturn<UpdateQuery> from(DataSource... dataSource) {
-		this.usedDataSource = dataSource;
 		return this;
 	}
 
 	@Override
-	public WhereQuery<UpdateQuery> setWhereQuery(WhereQuery<UpdateQuery> whereQuery) {
-		this.whereQuery = whereQuery;
-		return whereQuery;
+	public FilterOrReturn from(DataSource... dataSource) {
+		this.usedDataSource = dataSource;
+		return this;
 	}
 }

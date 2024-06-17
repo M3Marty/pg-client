@@ -4,15 +4,22 @@ import org.m3m.sql.builder.Sql;
 import org.m3m.sql.builder.query.ListQuery;
 import org.m3m.sql.builder.query.Query;
 
-public interface UpdateSetOps<T extends UpdateSetOps<?>> extends Query {
+import java.util.List;
 
-	T set(String field, String expression);
+public interface UpdateSetOps extends UpdateOps, Query {
 
-	default T set(Object dst, Object src) {
+	List<String> getSetExpressions();
+
+	default UpdateSetOps set(String field, String expression) {
+		getSetExpressions().add(field + " = " + expression);
+		return this;
+	}
+
+	default UpdateSetOps set(Object dst, Object src) {
 		return set(Sql.getObjectStringValue(dst), Sql.getObjectStringValue(src));
 	}
 
-	default T set(ListQuery dst, ListQuery src) {
+	default UpdateOps set(ListQuery dst, ListQuery src) {
 		return set(
 				String.format("(%s)", dst.buildExpression()),
 				String.format("(%s)", src.buildExpression())

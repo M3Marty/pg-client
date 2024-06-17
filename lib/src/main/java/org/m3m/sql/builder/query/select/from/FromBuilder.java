@@ -6,14 +6,14 @@ import org.m3m.sql.builder.query.from.TableDataSource;
 public interface FromBuilder extends FromExpression {
 
 	default JoinableAndSamplableTable from(TableDataSource table) {
-		return setFromExpression(new StringBuilder(table.buildExpression()));
+		return appendFromExpression(table.buildExpression());
 	}
 
 	default JoinableFromElement from(Query selectOrFunction) {
-		return setFromExpression(new StringBuilder(selectOrFunction.buildExpression()));
+		return appendFromExpression(selectOrFunction.buildExpression());
 	}
 
 	default JoinableFromElement fromLateral(Query selectOrFunction) {
-		return setFromExpression(new StringBuilder("LATERAL " + selectOrFunction.buildExpression()));
+		return appendFromExpression("LATERAL " + selectOrFunction.buildExpression());
 	}
 }

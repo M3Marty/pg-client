@@ -4,6 +4,8 @@ import org.m3m.sql.builder.Sql;
 
 public interface WhereOps<T extends WhereOps<?>> {
 
+	void appendCondition(String expression);
+
 	static String eq(Object value) {
 		return " = " + Sql.getObjectStringValue(value);
 	}
@@ -20,8 +22,6 @@ public interface WhereOps<T extends WhereOps<?>> {
 		return " > " + Sql.getObjectStringValue(value);
 	}
 
-	void appendCondition(String expression);
-
 	default T and(String field, String expression) {
 		return and(field + expression);
 	}
@@ -32,13 +32,13 @@ public interface WhereOps<T extends WhereOps<?>> {
 
 	@SuppressWarnings("unchecked")
 	default T and(String expression) {
-		appendCondition(" AND " + expression);
+		appendCondition("AND " + expression);
 		return (T) this;
 	}
 
 	@SuppressWarnings("unchecked")
 	default T or(String expression) {
-		appendCondition(" OR " + expression);
+		appendCondition("OR " + expression);
 		return (T) this;
 	}
 }

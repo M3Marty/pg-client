@@ -42,7 +42,7 @@ public class Sql {
 		return new SelectQuery();
 	}
 
-	public SimpleFromAliasIn<UpdateSetOps<UpdateSetBuilder>> update() {
+	public SimpleFromAliasIn<UpdateSetOps> update() {
 		return new UpdateQuery();
 	}
 
