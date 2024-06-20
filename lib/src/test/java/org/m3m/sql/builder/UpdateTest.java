@@ -74,13 +74,6 @@ public class UpdateTest {
 		assertEquals("UPDATE employees SET sales_count = sales_count + 1 WHERE id = (SELECT sales_person FROM accounts WHERE name = 'Acme Corporation')", query);
 	}
 
-	/**
-	 * TODO
-	 *
-	 * UPDATE accounts SET (contact_first_name,contact_last_name) =
-	 *     (SELECT first_name,last_name FROM salesmen
-	 *      WHERE salesmen.id = accounts.sales_id);
-	 */
 	@Test
 	public void updateDataFromAnotherTableTest() {
 		String query = update("accounts")
