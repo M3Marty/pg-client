@@ -2,6 +2,7 @@ package org.m3m.sql.builder.query.select;
 
 import lombok.*;
 import org.m3m.sql.builder.query.Query;
+import org.m3m.sql.builder.query.select.block.TargetableBlockSelect;
 import org.m3m.sql.builder.query.select.distinct.*;
 import org.m3m.sql.builder.query.select.from.*;
 import org.m3m.sql.builder.query.select.group.GroupingSelectOps;
@@ -14,7 +15,8 @@ public class SelectQuery implements DistinctableSelect, DistinctOrSelectValues,
                                     JoiningCondition, JoiningConditionBuilder,
                                     SelectOps, Query,
                                     GroupingSelectOps,
-                                    RangableSelect {
+                                    RangableSelect,
+                                    TargetableBlockSelect {
 
 	@Setter
 	private String distinctExpression = "";
@@ -45,7 +47,6 @@ public class SelectQuery implements DistinctableSelect, DistinctOrSelectValues,
 	@Override
 	public String build() {
 		if (selectValuesExpression == null || selectValuesExpression.isEmpty()
-				|| distinctExpression.isEmpty()
 				|| fromExpression.isEmpty()) {
 			throw new IllegalStateException("Incorrect select expression");
 		}
@@ -68,11 +69,15 @@ public class SelectQuery implements DistinctableSelect, DistinctOrSelectValues,
 		}
 
 		if (!getOrderExpression().isEmpty()) {
-			builder.append(getOrderExpression());
+			builder.append(' ').append(getOrderExpression());
 		}
 
 		if (!getRangeExpression().isEmpty()) {
-			builder.append(getRangeExpression());
+			builder.append(' ').append(getRangeExpression());
+		}
+
+		if (!blockExpression.isEmpty()) {
+			builder.append(' ').append(getBlockExpression());
 		}
 
 		return builder.toString();
@@ -103,7 +108,7 @@ public class SelectQuery implements DistinctableSelect, DistinctOrSelectValues,
 
 	@Override
 	public RangableSelect orderBy(String expression) {
-		orderExpression.append("ORDER BY").append(expression);
+		orderExpression.append("ORDER BY ").append(expression);
 		return this;
 	}
 }

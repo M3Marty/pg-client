@@ -145,6 +145,63 @@ public class SelectTest {
 		assertEquals("SELECT * FROM table INTERSECT SELECT * FROM another EXCEPT SELECT * FROM third", query);
 	}
 
+	@Test
+	public void simpleSortSelectTest() {
+		String query = select().all().from(table("table")).orderBy("time_created").build();
 
+		assertEquals("SELECT * FROM table ORDER BY time_created", query);
+	}
 
+	@Test
+	public void simpleSortAndLimitTest() {
+		String query = select().all().from(table("table")).orderBy("a", "b")
+				.limit(10).build();
+
+		assertEquals("SELECT * FROM table ORDER BY a,b LIMIT 10", query);
+	}
+
+	@Test
+	public void simpleSortAndFetchTest() {
+		String query = select().all().from(table("table")).orderBy("time_created")
+				.fetch(20, 10).build();
+
+		assertEquals("SELECT * FROM table ORDER BY time_created OFFSET 20 FETCH 10 ONLY", query);
+	}
+
+	@Test
+	public void simpleSortAndOffsetTest() {
+		String query = select().all().from(table("table")).orderBy("a", "b")
+				.offset(10).build();
+
+		assertEquals("SELECT * FROM table ORDER BY a,b OFFSET 10", query);
+	}
+
+	@Test
+	public void simpleBlockTest() {
+		String query = select().all().from(table("table")).blockForUpdate().build();
+
+		assertEquals("SELECT * FROM table FOR UPDATE", query);
+	}
+
+	@Test
+	public void simpleBlockOfTableTest() {
+		String query = select().all().from(table("table")).blockForShare().of("another").build();
+
+		assertEquals("SELECT * FROM table FOR SHARE OF another", query);
+	}
+
+	@Test
+	public void simpleBlockNoWaitTest() {
+		String query = select().all().from(table("table")).blockForNoKeyUpdate().noWait();
+
+		assertEquals("SELECT * FROM table FOR NO KEY UPDATE NOWAIT", query);
+	}
+
+	@Test
+	public void simpleBlockSkipLockedTest() {
+		String query = select().all().from(table("table"))
+				.blockForKeyShare().of("another", "third").skipLocked();
+
+		assertEquals("SELECT * FROM table FOR KEY SHARE OF another,third SKIP LOCKED", query);
+	}
 }

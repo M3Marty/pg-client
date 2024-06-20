@@ -42,4 +42,9 @@ public class SelectFilterBuilder implements WhereOps<SelectFilterBuilder>,
 	public RangableSelect orderBy(String expression) {
 		return parentQuery.orderBy(expression);
 	}
+
+	@Override
+	public StringBuilder getBlockExpression() {
+		return parentQuery.getBlockExpression();
+	}
 }
