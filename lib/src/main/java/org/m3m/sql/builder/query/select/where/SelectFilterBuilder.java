@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.m3m.sql.builder.query.Query;
 import org.m3m.sql.builder.query.select.SelectQuery;
 import org.m3m.sql.builder.query.select.group.GroupingSelectOps;
+import org.m3m.sql.builder.query.select.range.RangableSelect;
 import org.m3m.sql.builder.query.where.WhereOps;
 
 @RequiredArgsConstructor
@@ -30,5 +31,15 @@ public class SelectFilterBuilder implements WhereOps<SelectFilterBuilder>,
 	@Override
 	public GroupingSelectOps groupBy(String expression) {
 		return parentQuery.groupBy(expression);
+	}
+
+	@Override
+	public StringBuilder getTableExpression() {
+		return parentQuery.getTableExpression();
+	}
+
+	@Override
+	public RangableSelect orderBy(String expression) {
+		return parentQuery.orderBy(expression);
 	}
 }

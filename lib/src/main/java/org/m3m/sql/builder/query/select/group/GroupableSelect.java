@@ -1,6 +1,8 @@
 package org.m3m.sql.builder.query.select.group;
 
-public interface GroupableSelect {
+import org.m3m.sql.builder.query.select.table.TableBiOps;
+
+public interface GroupableSelect extends TableBiOps {
 
 	GroupingSelectOps groupBy(String expression);
 }

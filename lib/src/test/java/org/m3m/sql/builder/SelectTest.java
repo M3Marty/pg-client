@@ -38,6 +38,53 @@ public class SelectTest {
 		assertEquals("SELECT DISTINCT ON (field,another) * FROM table", query);
 	}
 
+
+	@Test
+	public void selectJoinTest() {
+		String query = select().all().from(table("table"))
+				.join(table("another").as("a")).on("field", eq(field("a.field")))
+				.build();
+
+		assertEquals("SELECT * FROM table JOIN another AS a ON field = a.field", query);
+	}
+
+	@Test
+	public void selectNaturalJoinTest() {
+		String query = select().all().from(table("table"))
+				.naturalLeftOuterJoin(table("another"))
+				.build();
+
+		assertEquals("SELECT * FROM table NATURAL LEFT OUTER JOIN another", query);
+	}
+
+	@Test
+	public void selectChainingJoinTest() {
+		String query = select().all().from(table("table"))
+				.fullOuterJoin(table("another")).on("table.id", eq(field("table_id")))
+				.rightJoin(table("third")).on("another.id", eq(field("another_id")))
+				.build();
+
+		assertEquals("SELECT * FROM table FULL OUTER JOIN another ON table.id = table_id RIGHT JOIN third ON another.id = another_id", query);
+	}
+
+	@Test
+	public void selectJoinUsingFieldsTest() {
+		String query = select().all().from(table("table"))
+				.innerJoin(table("another")).using("a", "b", "c").build();
+
+		assertEquals("SELECT * FROM table INNER JOIN another USING (a,b,c)", query);
+	}
+
+	@Test
+	public void selectJoiningSamplesTest() {
+		String query = select().all().from(table("table")).sampleSystem(0.5)
+				.naturalJoin(table("another")).build();
+
+		assertEquals(
+				"SELECT * FROM table TABLESAMPLE SYSTEM (0.5) NATURAL JOIN another",
+				query);
+	}
+
 	@Test
 	public void simpleFilteredSelectTest() {
 		String query = select().all().from(table("table"))
@@ -79,4 +126,25 @@ public class SelectTest {
 
 		assertEquals("SELECT * FROM table GROUP BY field HAVING sum(field) > 0 OR desc = DEFAULT", query);
 	}
+
+	@Test
+	public void simpleUnionSelectsTest() {
+		String query = select().all().from(table("table"))
+				.unionWith(select().all().from(table("another"))).build();
+
+		assertEquals("SELECT * FROM table UNION SELECT * FROM another", query);
+	}
+
+	@Test
+	public void simpleMultipleTableBiOperationsTest() {
+		String query = select().all().from(table("table"))
+				.intersectWith(select().all().from(table("another")))
+				.except(select().all().from(table("third")))
+				.build();
+
+		assertEquals("SELECT * FROM table INTERSECT SELECT * FROM another EXCEPT SELECT * FROM third", query);
+	}
+
+
+
 }

@@ -5,6 +5,7 @@ import org.m3m.sql.builder.query.Query;
 import org.m3m.sql.builder.query.select.distinct.*;
 import org.m3m.sql.builder.query.select.from.*;
 import org.m3m.sql.builder.query.select.group.GroupingSelectOps;
+import org.m3m.sql.builder.query.select.range.RangableSelect;
 
 public class SelectQuery implements DistinctableSelect, DistinctOrSelectValues,
                                     DistinctOnOrSelectValues,
@@ -12,7 +13,8 @@ public class SelectQuery implements DistinctableSelect, DistinctOrSelectValues,
                                     FromBuilder, JoinableAndSamplableTable,
                                     JoiningCondition, JoiningConditionBuilder,
                                     SelectOps, Query,
-                                    GroupingSelectOps {
+                                    GroupingSelectOps,
+                                    RangableSelect {
 
 	@Setter
 	private String distinctExpression = "";
@@ -28,9 +30,25 @@ public class SelectQuery implements DistinctableSelect, DistinctOrSelectValues,
 	@Getter
 	private final StringBuilder groupExpression = new StringBuilder();
 
+	@Getter
+	private final StringBuilder tableExpression = new StringBuilder();
+
+	@Getter
+	private final StringBuilder orderExpression = new StringBuilder();
+
+	@Getter
+	private final StringBuilder rangeExpression = new StringBuilder();
+
+	@Getter
+	private final StringBuilder blockExpression = new StringBuilder();
+
 	@Override
 	public String build() {
-		// TODO checks
+		if (selectValuesExpression == null || selectValuesExpression.isEmpty()
+				|| distinctExpression.isEmpty()
+				|| fromExpression.isEmpty()) {
+			throw new IllegalStateException("Incorrect select expression");
+		}
 
 		StringBuilder builder = new StringBuilder("SELECT ")
 				.append(distinctExpression)
@@ -38,11 +56,23 @@ public class SelectQuery implements DistinctableSelect, DistinctOrSelectValues,
 				.append(" FROM").append(fromExpression);
 
 		if (!getWhereExpression().isEmpty()) {
-			builder.append(whereExpression);
+			builder.append(getWhereExpression());
 		}
 
 		if (!getGroupExpression().isEmpty()) {
-			builder.append(' ').append(groupExpression);
+			builder.append(' ').append(getGroupExpression());
+		}
+
+		if (!getTableExpression().isEmpty()) {
+			builder.append(getTableExpression());
+		}
+
+		if (!getOrderExpression().isEmpty()) {
+			builder.append(getOrderExpression());
+		}
+
+		if (!getRangeExpression().isEmpty()) {
+			builder.append(getRangeExpression());
 		}
 
 		return builder.toString();
@@ -68,6 +98,12 @@ public class SelectQuery implements DistinctableSelect, DistinctOrSelectValues,
 	@Override
 	public GroupingSelectOps groupBy(String expression) {
 		groupExpression.append("GROUP BY ").append(expression);
+		return this;
+	}
+
+	@Override
+	public RangableSelect orderBy(String expression) {
+		orderExpression.append("ORDER BY").append(expression);
 		return this;
 	}
 }
