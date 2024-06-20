@@ -9,7 +9,10 @@ import org.m3m.sql.builder.query.insert.InsertQuery;
 import org.m3m.sql.builder.query.insert.InsertValuesOps;
 import org.m3m.sql.builder.query.select.distinct.DistinctOrSelectValues;
 import org.m3m.sql.builder.query.select.SelectQuery;
+import org.m3m.sql.builder.query.select.from.FromBuilder;
 import org.m3m.sql.builder.query.update.*;
+
+import java.util.Arrays;
 
 @UtilityClass
 public class Sql {
@@ -42,8 +45,28 @@ public class Sql {
 		return new SelectQuery();
 	}
 
+	public FromBuilder select(String field) {
+		return new SelectQuery().values(field);
+	}
+
+	public FromBuilder select(ValueQueryAs field) {
+		return new SelectQuery().values(field);
+	}
+
+	public FromBuilder selectAll() {
+		return new SelectQuery().all();
+	}
+
 	public SimpleFromAliasIn<UpdateSetOps> update() {
 		return new UpdateQuery();
+	}
+
+	public UpdateSetOps update(String tableName) {
+		return new UpdateQuery().in(tableName);
+	}
+
+	public UpdateSetOps update(TableDataSource table) {
+		return new UpdateQuery().in(table);
 	}
 
 	public SimpleFrom<DeleteOps> delete() {
@@ -74,15 +97,19 @@ public class Sql {
 		return new ListQuery((Object[]) fields);
 	}
 
-	public ListQuery values(ValueQuery...values) {
+	public ListQuery fields(String...fields) {
+		return new ListQuery(Arrays.stream(fields).map(Sql::field).toArray());
+	}
+
+	public ListQuery values(Query...values) {
 		return new ListQuery((Object[]) values);
 	}
 
-	public ValueQueryAs query(Query query) {
-		return new ValueQueryAs(query.buildExpression());
+	public String desc(String expression) {
+		return expression + " DESC";
 	}
 
-	public ValueQueryAs query(String query) {
-		return new ValueQueryAs("(" + query + ")");
+	public String asc(String expression) {
+		return expression + " ASC";
 	}
 }

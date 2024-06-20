@@ -6,8 +6,7 @@ import org.m3m.sql.builder.Sql;
 import org.m3m.sql.builder.query.Query;
 import org.m3m.sql.builder.query.from.SimpleFromAliasInto;
 import org.m3m.sql.builder.query.from.TableDataSource;
-import org.m3m.sql.builder.query.insert.conflict.AddOrOnConflictOrReturn;
-import org.m3m.sql.builder.query.insert.conflict.ConflictConditionBuilder;
+import org.m3m.sql.builder.query.insert.conflict.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -83,6 +82,13 @@ public class InsertQuery implements SimpleFromAliasInto<InsertValuesOps>,
 				.map(Sql::getObjectStringValue).collect(Collectors.toList());
 		this.values.add("(" + String.join(",", valuesIterable) + ")");
 
+		return this;
+	}
+
+	@Override
+	public OnConflictOrReturn from(Query select) {
+		this.values.add(select.build());
+		this.valuesExpression = "";
 		return this;
 	}
 

@@ -2,8 +2,6 @@ package org.m3m.sql.builder;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.stream.IntStream;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.m3m.sql.builder.Sql.*;
 import static org.m3m.sql.builder.SqlFunctions.*;
@@ -13,7 +11,7 @@ public class SelectTest {
 
 	@Test
 	public void simpleSelectTest() {
-		String query = select().all().from(table("table")).build();
+		String query = selectAll().from("table").build();
 
 		assertEquals("SELECT * FROM table", query);
 	}
@@ -28,15 +26,14 @@ public class SelectTest {
 
 	@Test
 	public void simpleDistinctOnSelectTest() {
-		String query = select().distinct().on("field").all().from(table("table")).build();
+		String query = select().distinct().on("field").all().from("table").build();
 
 		assertEquals("SELECT DISTINCT ON (field) * FROM table", query);
 	}
 
 	@Test
 	public void simpleDistinctOnMultipleSelectTest() {
-		String query = select().distinctOn("field", "another")
-				.all().from(table("table")).build();
+		String query = select().distinctOn("field", "another").all().from("table").build();
 
 		assertEquals("SELECT DISTINCT ON (field,another) * FROM table", query);
 	}
@@ -44,7 +41,7 @@ public class SelectTest {
 
 	@Test
 	public void selectJoinTest() {
-		String query = select().all().from(table("table"))
+		String query = selectAll().from("table")
 				.join(table("another").as("a")).on("field", eq(field("a.field")))
 				.build();
 
@@ -53,16 +50,14 @@ public class SelectTest {
 
 	@Test
 	public void selectNaturalJoinTest() {
-		String query = select().all().from(table("table"))
-				.naturalLeftOuterJoin(table("another"))
-				.build();
+		String query = selectAll().from("table").naturalLeftOuterJoin(table("another")).build();
 
 		assertEquals("SELECT * FROM table NATURAL LEFT OUTER JOIN another", query);
 	}
 
 	@Test
 	public void selectChainingJoinTest() {
-		String query = select().all().from(table("table"))
+		String query = selectAll().from("table")
 				.fullOuterJoin(table("another")).on("table.id", eq(field("table_id")))
 				.rightJoin(table("third")).on("another.id", eq(field("another_id")))
 				.build();
@@ -72,7 +67,7 @@ public class SelectTest {
 
 	@Test
 	public void selectJoinUsingFieldsTest() {
-		String query = select().all().from(table("table"))
+		String query = selectAll().from("table")
 				.innerJoin(table("another")).using("a", "b", "c").build();
 
 		assertEquals("SELECT * FROM table INNER JOIN another USING (a,b,c)", query);
@@ -80,7 +75,7 @@ public class SelectTest {
 
 	@Test
 	public void selectJoiningSamplesTest() {
-		String query = select().all().from(table("table")).sampleSystem(0.5)
+		String query = selectAll().from("table").sampleSystem(0.5)
 				.naturalJoin(table("another")).build();
 
 		assertEquals(
@@ -90,41 +85,37 @@ public class SelectTest {
 
 	@Test
 	public void simpleFilteredSelectTest() {
-		String query = select().all().from(table("table"))
-				.where("a", grThan(10)).build();
+		String query = selectAll().from("table").where("a", grThan(10)).build();
 
 		assertEquals("SELECT * FROM table WHERE a > 10", query);
 	}
 
 	@Test
 	public void simpleMultipleFiltersSelectTest() {
-		String query = select().all().from(table("table"))
-				.where("a", grThan(10)).or("b", lsThan(5)).build();
+		String query = selectAll().from("table").where("a", grThan(10)).or("b", lsThan(5)).build();
 
 		assertEquals("SELECT * FROM table WHERE a > 10 OR b < 5", query);
 	}
 
 	@Test
 	public void simpleGroupSelectTest() {
-		String query = select().all().from(table("table"))
-				.groupBy("field").build();
+		String query = selectAll().from("table").groupBy("field").build();
 
 		assertEquals("SELECT * FROM table GROUP BY field", query);
 	}
 
 	@Test
 	public void simpleGroupHavingSelectTest() {
-		String query = select().all().from(table("table"))
+		String query = selectAll().from("table")
 				.groupBy("field").having(sum("field"), grThan(0)).build();
 
-		assertEquals("SELECT * FROM table GROUP BY field HAVING sum(field) > 0", query);
+		assertEquals("SELECT * FROM table GROUP BY field HAVING SUM(field) > 0", query);
 	}
 
 	@Test
 	public void simpleGroupMultipleHavingSelectTest() {
-		String query = select().all().from(table("table"))
-				.groupBy("field")
-				.having("sum(field)", grThan(0)).or("desc", eq(defaultValue()))
+		String query = selectAll().from("table")
+				.groupBy("field").having("sum(field)", grThan(0)).or("desc", eq(defaultValue()))
 				.build();
 
 		assertEquals("SELECT * FROM table GROUP BY field HAVING sum(field) > 0 OR desc = DEFAULT", query);
@@ -132,7 +123,7 @@ public class SelectTest {
 
 	@Test
 	public void simpleUnionSelectsTest() {
-		String query = select().all().from(table("table"))
+		String query = selectAll().from("table")
 				.unionWith(select().all().from(table("another"))).build();
 
 		assertEquals("SELECT * FROM table UNION SELECT * FROM another", query);
@@ -140,7 +131,7 @@ public class SelectTest {
 
 	@Test
 	public void simpleMultipleTableBiOperationsTest() {
-		String query = select().all().from(table("table"))
+		String query = selectAll().from("table")
 				.intersectWith(select().all().from(table("another")))
 				.except(select().all().from(table("third")))
 				.build();
@@ -150,87 +141,78 @@ public class SelectTest {
 
 	@Test
 	public void simpleSortSelectTest() {
-		String query = select().all().from(table("table")).orderBy("time_created").build();
+		String query = selectAll().from("table").orderBy("time_created").build();
 
 		assertEquals("SELECT * FROM table ORDER BY time_created", query);
 	}
 
 	@Test
 	public void simpleSortAndLimitTest() {
-		String query = select().all().from(table("table")).orderBy("a", "b")
-				.limit(10).build();
+		String query = selectAll().from("table").orderBy("a", "b").limit(10).build();
 
 		assertEquals("SELECT * FROM table ORDER BY a,b LIMIT 10", query);
 	}
 
 	@Test
 	public void simpleSortAndFetchTest() {
-		String query = select().all().from(table("table")).orderBy("time_created")
-				.fetch(20, 10).build();
+		String query = selectAll().from("table").orderBy("time_created").fetch(20, 10).build();
 
 		assertEquals("SELECT * FROM table ORDER BY time_created OFFSET 20 FETCH 10 ONLY", query);
 	}
 
 	@Test
 	public void simpleSortAndOffsetTest() {
-		String query = select().all().from(table("table")).orderBy("a", "b")
-				.offset(10).build();
+		String query = selectAll().from("table").orderBy("a", "b").offset(10).build();
 
 		assertEquals("SELECT * FROM table ORDER BY a,b OFFSET 10", query);
 	}
 
 	@Test
 	public void simpleBlockTest() {
-		String query = select().all().from(table("table")).blockForUpdate().build();
+		String query = selectAll().from("table").blockForUpdate().build();
 
 		assertEquals("SELECT * FROM table FOR UPDATE", query);
 	}
 
 	@Test
 	public void simpleBlockOfTableTest() {
-		String query = select().all().from(table("table")).blockForShare().of("another").build();
+		String query = selectAll().from("table").blockForShare().of("another").build();
 
 		assertEquals("SELECT * FROM table FOR SHARE OF another", query);
 	}
 
 	@Test
 	public void simpleBlockNoWaitTest() {
-		String query = select().all().from(table("table")).blockForNoKeyUpdate().noWait();
+		String query = selectAll().from("table").blockForNoKeyUpdate().noWait().build();
 
 		assertEquals("SELECT * FROM table FOR NO KEY UPDATE NOWAIT", query);
 	}
 
 	@Test
 	public void simpleBlockSkipLockedTest() {
-		String query = select().all().from(table("table"))
-				.blockForKeyShare().of("another", "third").skipLocked();
+		String query = selectAll().from("table")
+				.blockForKeyShare().of("another", "third").skipLocked().build();
 
 		assertEquals("SELECT * FROM table FOR KEY SHARE OF another,third SKIP LOCKED", query);
 	}
 
 	@Test
 	public void simpleNestedSelectInFromTest() {
-		String query = select().all()
-				.from(query(select().all().from(table("inner_table"))).as("subquery"))
-				.build();
+		String query = selectAll().from(selectAll().from(table("inner_table")).as("subquery")).build();
 
 		assertEquals("SELECT * FROM (SELECT * FROM inner_table) AS subquery", query);
 	}
 
 	@Test
 	public void simpleTableSampleTest() {
-		String query = select().all()
-				.from(table("table1")).sampleSystem(0.25)
-				.build();
+		String query = selectAll().from("table1").sampleSystem(0.25).build();
 
 		assertEquals("SELECT * FROM table1 TABLESAMPLE SYSTEM (0.25)", query);
 	}
 
 	@Test
 	public void simpleFunctionSelectTest() {
-		String query = select().all()
-				.from(generateSeries(1, 10).as("series"))
-				.build();
+		String query = selectAll().from(generateSeries(1, 10).as("series")).build();
 
 		assertEquals("SELECT * FROM generate_series(1,10) AS series", query);
 	}
@@ -244,6 +226,78 @@ public class SelectTest {
 				.groupBy("t1.column1").having(count("t2.column2"), grThan(5))
 				.build();
 
-		assertEquals("SELECT t1.column1,t2.column2 FROM table1 AS t1 JOIN table2 AS t2 ON t1.id = t2.id WHERE t1.column1 = 'value1' GROUP BY t1.column1 HAVING count(t2.column2) > 5", query);
+		assertEquals("SELECT t1.column1,t2.column2 FROM table1 AS t1 JOIN table2 AS t2 ON t1.id = t2.id WHERE t1.column1 = 'value1' GROUP BY t1.column1 HAVING COUNT(t2.column2) > 5", query);
+	}
+
+	@Test
+	public void selectDistinctValuesOrderedTest() {
+		String query = select().distinctOn("location")
+				.values("location", "time", "report")
+				.from("weather_reports")
+				.orderBy("location", desc("time"))
+				.build();
+
+		assertEquals("SELECT DISTINCT ON (location) location,time,report FROM weather_reports ORDER BY location,time DESC", query);
+	}
+
+	@Test
+	public void selectValueOrderedTest() {
+		String query = select("name").from("distributors")
+				.orderBy("code").build();
+
+		assertEquals("SELECT name FROM distributors ORDER BY code", query);
+	}
+
+	@Test
+	public void selectAllFromBlockedQueryTest() {
+		String query = selectAll()
+				.from(selectAll().from("mytable").blockForUpdate().as("ss"))
+				.where("col1", eq(5)).build();
+
+		assertEquals("SELECT * FROM (SELECT * FROM mytable FOR UPDATE) AS ss WHERE col1 = 5", query);
+	}
+
+	@Test
+	public void selectFromTwoTablesTest() {
+		String query = select().values("f.title", "f.did", "d.name", "f.date_prod", "f.kind")
+				.from(table("distributors").as("d"), table("films").as("f"))
+				.where("f.did", eq(field("d.did"))).build();
+
+		assertEquals("SELECT f.title,f.did,d.name,f.date_prod,f.kind FROM distributors AS d,films AS f WHERE f.did = d.did", query);
+	}
+
+	@Test
+	public void selectValuesFromGroupsTest() {
+		String query = select().values(field("kind"), sum("len").as("total"))
+				.from("films").groupBy("kind").build();
+
+		assertEquals("SELECT kind,SUM(len) AS total FROM films GROUP BY kind", query);
+	}
+
+	@Test
+	public void filteringGroupsTest() {
+		String query = select().values(field("kind"), sum("len").as("total")).from("films")
+				.groupBy("kind").having(sum("len"), lsThan(hours(5))).build();
+
+		assertEquals("SELECT kind,SUM(len) AS total FROM films GROUP BY kind HAVING SUM(len) < INTERVAL '5 hours'", query);
+	}
+
+	@Test
+	public void selectOrderedTest() {
+		String query = select().all().from("distributors").orderBy("name").build();
+
+		assertEquals("SELECT * FROM distributors ORDER BY name", query);
+	}
+
+	@Test
+	public void unionTablesTest() {
+		String query = select().values("distributors.name").from("distributors")
+				.where("distributors.name", like("W%"))
+				.unionWith(
+						select().values("actors.name").from("actors")
+						.where("actors.name", like("W%"))
+				).build();
+
+		assertEquals("SELECT distributors.name FROM distributors WHERE distributors.name LIKE 'W%' UNION SELECT actors.name FROM actors WHERE actors.name LIKE 'W%'", query);
 	}
 }

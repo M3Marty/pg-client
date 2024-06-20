@@ -1,18 +1,18 @@
 package org.m3m.sql.builder.query.select.block;
 
-import org.m3m.sql.builder.query.*;
+import org.m3m.sql.builder.query.select.SelectAlias;
 
-public interface BlockedSelect extends Query {
+public interface BlockedSelect extends SelectAlias {
 
 	StringBuilder getBlockExpression();
 
-	default String noWait() {
+	default SelectAlias noWait() {
 		getBlockExpression().append(" NOWAIT");
-		return this.build();
+		return this;
 	}
 
-	default String skipLocked() {
+	default SelectAlias skipLocked() {
 		getBlockExpression().append(" SKIP LOCKED");
-		return this.build();
+		return this;
 	}
 }

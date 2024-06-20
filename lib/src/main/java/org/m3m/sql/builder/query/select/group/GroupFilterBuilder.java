@@ -22,6 +22,6 @@ public class GroupFilterBuilder implements WhereOps<GroupFilterBuilder>, Query {
 
 	@Override
 	public String buildExpression() {
-		return "";
+		return parentQuery.buildExpression();
 	}
 }

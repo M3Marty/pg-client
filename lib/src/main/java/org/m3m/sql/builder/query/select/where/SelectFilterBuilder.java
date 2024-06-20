@@ -20,7 +20,7 @@ public class SelectFilterBuilder implements WhereOps<SelectFilterBuilder>,
 
 	@Override
 	public String buildExpression() {
-		return "";
+		return parentQuery.buildExpression();
 	}
 
 	@Override

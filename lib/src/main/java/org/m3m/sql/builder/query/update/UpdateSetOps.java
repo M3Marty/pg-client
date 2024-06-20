@@ -25,4 +25,11 @@ public interface UpdateSetOps extends UpdateOps, Query {
 				String.format("(%s)", src.buildExpression())
 		);
 	}
+
+	default UpdateOps set(ListQuery dst, Query select) {
+		return set(
+				String.format("(%s)", dst.buildExpression()),
+				select.buildExpression()
+		);
+	}
 }

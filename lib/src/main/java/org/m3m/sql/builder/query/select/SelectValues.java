@@ -20,6 +20,6 @@ public interface SelectValues {
 	}
 
 	default FromBuilder values(Object...toSelect) {
-		return values(new ListQuery((Object) toSelect).buildExpression());
+		return values(new ListQuery(toSelect).buildExpression());
 	}
 }

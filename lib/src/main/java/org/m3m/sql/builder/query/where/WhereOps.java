@@ -6,6 +6,10 @@ public interface WhereOps<T extends WhereOps<?>> {
 
 	void appendCondition(String expression);
 
+	static String in(Object value) {
+		return " IN " + Sql.getObjectStringValue(value);
+	}
+
 	static String eq(Object value) {
 		return " = " + Sql.getObjectStringValue(value);
 	}
@@ -16,6 +20,10 @@ public interface WhereOps<T extends WhereOps<?>> {
 
 	static String lsThan(Object value) {
 		return " < " + Sql.getObjectStringValue(value);
+	}
+
+	static String like(Object value) {
+		return " LIKE " + Sql.getObjectStringValue(value);
 	}
 
 	static String grThan(Object value) {
