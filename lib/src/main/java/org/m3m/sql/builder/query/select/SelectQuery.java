@@ -4,14 +4,15 @@ import lombok.*;
 import org.m3m.sql.builder.query.Query;
 import org.m3m.sql.builder.query.select.distinct.*;
 import org.m3m.sql.builder.query.select.from.*;
-import org.m3m.sql.builder.query.select.where.SelectFilterBuilder;
+import org.m3m.sql.builder.query.select.group.GroupingSelectOps;
 
 public class SelectQuery implements DistinctableSelect, DistinctOrSelectValues,
                                     DistinctOnOrSelectValues,
                                     SelectValues,
                                     FromBuilder, JoinableAndSamplableTable,
                                     JoiningCondition, JoiningConditionBuilder,
-                                    SelectOps, Query {
+                                    SelectOps, Query,
+                                    GroupingSelectOps {
 
 	@Setter
 	private String distinctExpression = "";
@@ -25,7 +26,7 @@ public class SelectQuery implements DistinctableSelect, DistinctOrSelectValues,
 	private final StringBuilder whereExpression = new StringBuilder();
 
 	@Getter
-	private final StringBuilder havingExpression = new StringBuilder();
+	private final StringBuilder groupExpression = new StringBuilder();
 
 	@Override
 	public String build() {
@@ -38,6 +39,10 @@ public class SelectQuery implements DistinctableSelect, DistinctOrSelectValues,
 
 		if (!getWhereExpression().isEmpty()) {
 			builder.append(whereExpression);
+		}
+
+		if (!getGroupExpression().isEmpty()) {
+			builder.append(' ').append(groupExpression);
 		}
 
 		return builder.toString();
@@ -57,6 +62,12 @@ public class SelectQuery implements DistinctableSelect, DistinctOrSelectValues,
 	@Override
 	public SelectQuery setSelectValuesExpression(String expression) {
 		selectValuesExpression = expression;
+		return this;
+	}
+
+	@Override
+	public GroupingSelectOps groupBy(String expression) {
+		groupExpression.append("GROUP BY ").append(expression);
 		return this;
 	}
 }

@@ -8,7 +8,7 @@ public interface DistinctOnOrSelectValues extends DistinctOn, SelectValues {
 
 	@Override
 	default SelectValues on(String...fields) {
-		setDistinctExpression("DISTINCT (" + String.join(",", fields) + ") ");
+		setDistinctExpression("DISTINCT ON (" + String.join(",", fields) + ") ");
 		return this;
 	}
 }
