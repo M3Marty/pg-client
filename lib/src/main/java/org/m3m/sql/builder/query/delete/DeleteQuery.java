@@ -15,7 +15,7 @@ public class DeleteQuery implements SimpleFrom<DeleteOps>, DeleteOps, Query {
 	@Setter
 	private String returningExpression;
 
-	@Getter(lazy = true)
+	@Getter
 	private final StringBuilder whereExpression = new StringBuilder();
 
 	@Override

@@ -1,10 +1,10 @@
 package org.m3m.sql.builder.query.select;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.m3m.sql.builder.query.Query;
 import org.m3m.sql.builder.query.select.distinct.*;
 import org.m3m.sql.builder.query.select.from.*;
+import org.m3m.sql.builder.query.select.where.SelectFilterBuilder;
 
 public class SelectQuery implements DistinctableSelect, DistinctOrSelectValues,
                                     DistinctOnOrSelectValues,
@@ -18,8 +18,14 @@ public class SelectQuery implements DistinctableSelect, DistinctOrSelectValues,
 
 	private String selectValuesExpression;
 
-	@Getter(lazy = true)
+	@Getter
 	private final StringBuilder fromExpression = new StringBuilder();
+
+	@Getter
+	private final StringBuilder whereExpression = new StringBuilder();
+
+	@Getter
+	private final StringBuilder havingExpression = new StringBuilder();
 
 	@Override
 	public String build() {
@@ -29,6 +35,10 @@ public class SelectQuery implements DistinctableSelect, DistinctOrSelectValues,
 				.append(distinctExpression)
 				.append(selectValuesExpression)
 				.append(" FROM").append(fromExpression);
+
+		if (!getWhereExpression().isEmpty()) {
+			builder.append(whereExpression);
+		}
 
 		return builder.toString();
 	}

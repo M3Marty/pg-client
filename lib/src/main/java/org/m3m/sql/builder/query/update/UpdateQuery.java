@@ -18,7 +18,7 @@ public class UpdateQuery implements SimpleFromAliasIn<UpdateSetOps>,
 	@Setter
 	protected String returningExpression;
 
-	@Getter(lazy = true)
+	@Getter
 	private final StringBuilder whereExpression = new StringBuilder();
 
 	@Getter

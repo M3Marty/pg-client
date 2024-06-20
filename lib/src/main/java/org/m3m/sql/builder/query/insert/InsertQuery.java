@@ -23,7 +23,7 @@ public class InsertQuery implements SimpleFromAliasInto<InsertValuesOps>,
 	@Setter
 	private String returningExpression;
 
-	@Getter(lazy = true)
+	@Getter
 	private final StringBuilder onConflictExpression = new StringBuilder();
 
 	private final List<String> values = new ArrayList<>();
