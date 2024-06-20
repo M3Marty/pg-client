@@ -2,8 +2,11 @@ package org.m3m.sql.builder;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.stream.IntStream;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.m3m.sql.builder.Sql.*;
+import static org.m3m.sql.builder.SqlFunctions.*;
 import static org.m3m.sql.builder.query.where.WhereOps.*;
 
 public class SelectTest {
@@ -112,7 +115,7 @@ public class SelectTest {
 	@Test
 	public void simpleGroupHavingSelectTest() {
 		String query = select().all().from(table("table"))
-				.groupBy("field").having("sum(field)", grThan(0)).build();
+				.groupBy("field").having(sum("field"), grThan(0)).build();
 
 		assertEquals("SELECT * FROM table GROUP BY field HAVING sum(field) > 0", query);
 	}
@@ -203,5 +206,44 @@ public class SelectTest {
 				.blockForKeyShare().of("another", "third").skipLocked();
 
 		assertEquals("SELECT * FROM table FOR KEY SHARE OF another,third SKIP LOCKED", query);
+	}
+
+	@Test
+	public void simpleNestedSelectInFromTest() {
+		String query = select().all()
+				.from(query(select().all().from(table("inner_table"))).as("subquery"))
+				.build();
+
+		assertEquals("SELECT * FROM (SELECT * FROM inner_table) AS subquery", query);
+	}
+
+	@Test
+	public void simpleTableSampleTest() {
+		String query = select().all()
+				.from(table("table1")).sampleSystem(0.25)
+				.build();
+
+		assertEquals("SELECT * FROM table1 TABLESAMPLE SYSTEM (0.25)", query);
+	}
+
+	@Test
+	public void simpleFunctionSelectTest() {
+		String query = select().all()
+				.from(generateSeries(1, 10).as("series"))
+				.build();
+
+		assertEquals("SELECT * FROM generate_series(1,10) AS series", query);
+	}
+
+	@Test
+	public void simpleCombinedConditionsTest() {
+		String query = select().values("t1.column1", "t2.column2")
+				.from(table("table1").as("t1"))
+				.join(table("table2").as("t2")).on("t1.id", eq(field("t2.id")))
+				.where("t1.column1", eq("value1"))
+				.groupBy("t1.column1").having(count("t2.column2"), grThan(5))
+				.build();
+
+		assertEquals("SELECT t1.column1,t2.column2 FROM table1 AS t1 JOIN table2 AS t2 ON t1.id = t2.id WHERE t1.column1 = 'value1' GROUP BY t1.column1 HAVING count(t2.column2) > 5", query);
 	}
 }

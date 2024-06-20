@@ -77,4 +77,12 @@ public class Sql {
 	public ListQuery values(ValueQuery...values) {
 		return new ListQuery((Object[]) values);
 	}
+
+	public ValueQueryAs query(Query query) {
+		return new ValueQueryAs(query.buildExpression());
+	}
+
+	public ValueQueryAs query(String query) {
+		return new ValueQueryAs("(" + query + ")");
+	}
 }

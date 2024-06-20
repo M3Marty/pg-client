@@ -1,6 +1,6 @@
 package org.m3m.sql.builder.query.select.block;
 
-import org.m3m.sql.builder.query.Query;
+import org.m3m.sql.builder.query.*;
 
 public interface BlockedSelect extends Query {
 

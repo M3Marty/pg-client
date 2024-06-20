@@ -85,7 +85,7 @@ public class SelectQuery implements DistinctableSelect, DistinctOrSelectValues,
 
 	@Override
 	public String buildExpression() {
-		return build();
+		return "(" + build() + ")";
 	}
 
 	@Override
